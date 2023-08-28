@@ -177,8 +177,42 @@ WHERE order_id IS NULL;
 
 -- ↓ SELF JOIN ↓ --
 
+CREATE TABLE employee
+(
+	employee_id INT PRIMARY KEY,
+	first_name VARCHAR(255) NOT NULL,
+	last_name VARCHAR(255) NOT NULL,
+	manager_id INT,
+	FOREIGN KEY (manager_id) REFERENCES employee(employee_id)
+);
+
+INSERT INTO employee
+(
+	employee_id,
+	first_name,
+	last_name,
+	manager_id
+)
+
+VALUES
+(1, 'Windy', 'Hays', NULL),
+(2, 'Ava', 'Christensen', 1),
+(3, 'Hassan', 'Conner', 1),
+(4, 'Anna', 'Reeves', 2),
+(5, 'Sau', 'Norman', 2),
+(6, 'Kelsie', 'Hays', 3),
+(7, 'Tory', 'Goff', 3),
+(8, 'Salley', 'Lester', 3);
+
+SELECT e.first_name || ' ' || e.last_name AS employee,
+	   m.first_name || ' ' || m.last_name AS manager
+FROM employee e
+LEFT JOIN employee m ON m.employee_id = e.manager_id
+ORDER BY manager
+
 
 -- ↓ USING and NATURAL JOIN ↓ --
+
 SELECT contact_name, company_name, phone, first_name, last_name, title,
 	   order_date, product_name, ship_country, products.unit_price, quantity, discount
 FROM orders
@@ -242,3 +276,24 @@ WHERE units_in_stock > (SELECT AVG(units_in_stock)
 						FROM products)
 ORDER BY units_in_stock;
 
+
+-- ↓ WHERE EXISTS ↓ --
+
+SELECT company_name, contact_name
+FROM customers
+WHERE EXISTS (SELECT customer_id FROM orders
+			 WHERE customer_id = customers.customer_id
+			 AND freight BETWEEN 50 AND 100);
+
+SELECT company_name, contact_name
+FROM customers
+WHERE NOT EXISTS (SELECT customer_id FROM orders
+			 	 WHERE customer_id = customers.customer_id
+			 	 AND order_date BETWEEN '1995-02-01' AND '1995-02-15');
+
+SELECT product_name
+FROM products
+WHERE NOT EXISTS (SELECT orders.order_id FROM orders
+			 	 JOIN order_details USING(order_id)
+			 	 WHERE order_details.product_id=product_id
+			 	 AND order_date BETWEEN '1995-02-01' AND '1995-02-15');
