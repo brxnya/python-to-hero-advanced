@@ -397,3 +397,111 @@ SELECT * FROM faculty;
 TRUNCATE TABLE faculty RESTART IDENTITY;
 
 DROP TABLE faculty;
+
+
+-- ↓ PRIMARY KEY ↓ --
+
+CREATE TABLE chair
+(
+	chair_id serial PRIMARY KEY,
+	chair_name varchar,
+	dean varchar
+);
+
+INSERT INTO chair
+VALUES (1, 'name', 'dean');
+
+SELECT * FROM chair;
+
+INSERT INTO chair
+VALUES (2, 'name2', 'dean2');
+
+DROP TABLE chair;
+
+CREATE TABLE chair
+(
+	chair_id serial UNIQUE NOT NULL,
+	chair_name varchar,
+	dean varchar
+);
+
+SELECT constraint_name
+FROM information_schema.key_column_usage
+WHERE table_name = 'chair'
+	AND table_schema = 'public'
+	AND column_name = 'chair_id';
+
+CREATE TABLE chair
+(
+	chair_id serial, -- PRIMARY KEY,
+	chair_name varchar,
+	dean varchar
+
+	CONSTRAINT PK_chair_chair_id PRIMARY KEY(chair_id)
+);
+
+ALTER TABLE chair
+DROP CONSTRAINT chair_chair_id_key;
+
+ALTER TABLE chair
+ADD PRIMARY KEY(chair_id);
+
+
+-- ↓ FOREIGN KEY ↓ --
+
+DROP TABLE publisher;
+
+DROP TABLE book_author;
+
+DROP TABLE book;
+
+CREATE TABLE publisher
+(
+	publisher_id int,
+	publisher_name varchar(128) NOT NULL,
+	address text,
+
+	CONSTRAINT PK_publisher_publisher_id PRIMARY KEY(publisher_id)
+);
+
+CREATE TABLE book
+(
+	book_id int,
+	title text NOT NULL,
+	isbn varchar(32) NOT NULL,
+	publisher_id int,
+
+	CONSTRAINT PK_book_book_id PRIMARY KEY(book_id)
+);
+
+INSERT INTO publisher
+VALUES
+(1, 'Everyman''s Library', 'NY'),
+(2, 'Oxford University Press', 'NY'),
+(3, 'Grand Central Publishing', 'Washington'),
+(4, 'Simon & Schuster', 'Chicago');
+
+INSERT INTO book
+VALUES
+(1, 'The Diary of a Young Girl', '0199535566', 10);
+
+SELECT * FROM book;
+
+TRUNCATE TABLE book;
+
+ALTER TABLE book
+ADD CONSTRAINT FK_books_publisher FOREIGN KEY(publisher_id) REFERENCES publisher(publisher_id);
+
+CREATE TABLE book
+(
+	book_id int,
+	title text NOT NULL,
+	isbn varchar(32) NOT NULL,
+	publisher_id int,
+
+	CONSTRAINT PK_book_book_id PRIMARY KEY(book_id),
+	CONSTRAINT PK_book_publisher FOREIGN KEY (publisher_id) REFERENCES publisher(publisher_id)
+);
+
+ALTER TABLE book
+DROP CONSTRAINT PK_book_publisher;
