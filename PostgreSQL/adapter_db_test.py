@@ -1,7 +1,7 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor, execute_values
 
-conn = psycopg2.connect(dbname="testdb", user="postgres", password="1234")
+conn = psycopg2.connect(dbname="testdb", user="postgres", password="")
 
 cur = conn.cursor()
 
