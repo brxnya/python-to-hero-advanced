@@ -531,3 +531,63 @@ SELECT * FROM book;
 INSERT INTO book
 VALUES
 (2, 'title', 'isbn', 1, -1.5);
+
+
+-- ↓ DDL - default ↓ --
+
+CREATE TABLE customer
+(
+	customer_id serial,
+	full_name text,
+	status char DEFAULT 'r',
+
+	CONSTRAINT PK_customer_customer_id PRIMARY KEY(customer_id),
+	CONSTRAINT CHK_customer_status CHECK (status = 'r' OR status = 'p')
+);
+
+INSERT INTO customer (full_name)
+VALUES
+('name');
+
+SELECT * FROM customer;
+
+ALTER TABLE customer
+ALTER COLUMN status DROP DEFAULT;
+
+ALTER TABLE customer
+ALTER COLUMN status SET DEFAULT 'r';
+
+
+-- ↓ DDL - sequences ↓ --
+
+CREATE SEQUENCE seq1;
+
+SELECT nextval('seq1');
+SELECT currval('seq1');
+SELECT lastval();
+
+SELECT setval('seq1', 16, true);
+SELECT currval('seq1');
+SELECT nextval('seq1');
+
+SELECT setval('seq1', 16, false);
+SELECT currval('seq1');
+SELECT nextval('seq1');
+
+CREATE SEQUENCE IF NOT EXISTS seq2 INCREMENT 16;
+SELECT nextval('seq2');
+
+CREATE SEQUENCE IF NOT EXISTS seq3
+INCREMENT 16
+MINVALUE 0
+MAXVALUE 128
+START WITH 0;
+
+SELECT nextval('seq3');
+
+ALTER SEQUENCE seq3 RENAME TO seq4;
+ALTER SEQUENCE seq4 RESTART WITH 16;
+
+SELECT nextval('seq4');
+
+DROP SEQUENCE seq4;
