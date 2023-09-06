@@ -628,7 +628,7 @@ SELECT * FROM book;
 
 CREATE TABLE book
 (
-	book_id int GENERATED ALWAYS AS IDENTITY NOT NOT NULL,
+	book_id int GENERATED ALWAYS AS IDENTITY NOT NULL,
 	title text NOT NULL,
 	isbn varchar(32) NOT NULL,
 	publisher_id int NOT NULL,
